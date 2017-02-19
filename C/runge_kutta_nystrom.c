@@ -33,8 +33,8 @@ double function(double x, double v, double t){
 
 
 int main (){
-	long steps = 1000; 				//Number of steps.
-	double x0=0.,v0=1.,t,h=0.001; 			//Initial position, initial velocity, time, step size.
+	long steps = 100000000; 				//Number of steps.
+	double x0=0.,v0=1.,t,h=0.000001; 			//Initial position, initial velocity, time, step size.
 	double *x = malloc(steps * sizeof(double)); 	//Position array
 	double *v = malloc(steps * sizeof(double)); 	//Velocity array
 

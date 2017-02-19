@@ -4,17 +4,16 @@
 #include <iostream>
 #include <string.h> //nsight doesn't give error if this isnt' included. ?!!
 
-#define GRID_X 5
-#define GRID_Y 5
+#define GRID_X 4
+//#define GRID_Y 100000
+#define GRID_Y 4
 #define GHOSTS 2
-#define NUMITER 4
 
 
 void init_mesh(float *grid) {
 
-	time_t t;
-	srand((unsigned) time(&t));
-
+	//	srand((unsigned) time(&t));
+	srand(1);
 	for ( int i = 0 ; i < GRID_Y + GHOSTS; i++ ) {
 		for ( int j = 0 ; j < GRID_X + GHOSTS; j++ ) {
 			grid[i*(GRID_X+GHOSTS) + j] = rand() / ((float) RAND_MAX) ;
@@ -22,7 +21,7 @@ void init_mesh(float *grid) {
 	}
 
 	for (int i = 1; i < GRID_Y+GHOSTS; i++ ){
-		grid[i*(GRID_X+GHOSTS)] = 1.-((float)i)/(GRID_Y+GHOSTS-1);
+		grid[i*(GRID_X+GHOSTS)] = 1.-((float)i)/(GRID_X+GHOSTS);
 		grid[(i+1)*(GRID_X+GHOSTS)-1] = 1.0;
 	}
 
@@ -31,7 +30,7 @@ void init_mesh(float *grid) {
 	}
 
 	for (int j = 0; j < GRID_X+GHOSTS; j++ ){
-		grid[(GRID_Y+GHOSTS-1)*(GRID_X+GHOSTS)+j]=(float)j/( GRID_X + GHOSTS -1) ;
+		grid[(GRID_Y+GHOSTS-1)*(GRID_X+GHOSTS)+j]=(float)j/( GRID_Y + GHOSTS -1) ;
 	}
 
 	for (int i = 1; i < GRID_Y+GHOSTS; i++ ){
@@ -62,11 +61,10 @@ void print_mesh(float *mesh) {
 using namespace std;
 
 int main(){
+	time_t t;
 	float *grid,*grid_new;
-	if (NULL == (grid = (float*) malloc( (GRID_X+GHOSTS)*(GRID_Y+GHOSTS) * sizeof(float) ) ) ) 
-	{ puts("GRID MEM FAIL");exit(1);}
-	if (NULL == (grid_new = (float*) malloc( (GRID_X+GHOSTS)*(GRID_Y+GHOSTS) * sizeof(float) ) ) ) 
-	{ puts("GRID_NEW MEM FAIL"); exit(1);}
+	if (NULL == (grid = (float*) malloc( (GRID_X+GHOSTS)*(GRID_Y+GHOSTS) * sizeof(float) ) ) ) { puts("GRID MEM FAIL");exit(1);}
+	if (NULL == (grid_new = (float*) malloc( (GRID_X+GHOSTS)*(GRID_Y+GHOSTS) * sizeof(float) ) ) ) { puts("GRID_NEW MEM FAIL"); exit(1);}
 
 	init_mesh(grid);
 	print_mesh(grid);
@@ -75,7 +73,7 @@ int main(){
 
 	/* Main iteration loop */
 
-	for (int i = 0; i < NUMITER; i++) {
+	for (int i = 0; i < 3; i++) {
 		scan_mesh(grid,grid_new);
 		memcpy(grid,grid_new,(GRID_X+GHOSTS)*(GRID_Y+GHOSTS) * sizeof(float));
 		print_mesh(grid);

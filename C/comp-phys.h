@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
-#include "comp-phys.h"
 
 
 double dot(double vec1[],double vec2[]){

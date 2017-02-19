@@ -1,13 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 
-#define h 0.01 /* step size */
 #define Steps 100000 /* Numbers of steps */
-
-/* Dim is equal to the number of equations in user_def_func(). */ 
-#define Dim 3 /* dimension of state variable */
 
 
 void user_def_func( double t, double Q[], double dQdt[])
@@ -30,42 +27,37 @@ void free_array(double *v) /* Free memory when done with arrays */
       free(v);
 }
 
-void swap_array(int Dim, double a[], double b[]) 
-{
-      int i;
-      for(i = 0; i <= Dim - 1; i++) b[i] = a[i];
-}
 
 void rko4(double h, int Dim,
-        void (*dQdt)(double t, double Q[], double dQdt[]),
+        void (*equations_of_motion)(double t, double Q[], double dQdt[]),
         double t, double Q0[], double Q[]) /* Runge-Kutta */
 {
         int i;
         double *k1 = array(Dim), *k2 = array(Dim), *k3 = array(Dim), *k4 = array(Dim);
         double *Qa = array(Dim), *dQ = array(Dim);
 
-        dQdt(t, Q0, dQ);
+        equations_of_motion(t, Q0, dQ);
         for(i = 0; i <= Dim - 1; i++)
         {
-                k1[i] = h * dQ[i];
-                Qa[i] = Q0[i] + k1[i]/2.;
+                k1[i] = dQ[i];
+                Qa[i] = Q0[i] + h*k1[i]/2.;
         }
 
-        dQdt(t + 0.5 * h, Qa, dQ);
+        equations_of_motion(t + 0.5 * h, Qa, dQ);
         for(i = 0; i <= Dim - 1; i++)
         {
                 k2[i] = h * dQ[i];
                 Qa[i] = Q0[i] + k2[i]/2.;
         }
 
-        dQdt(t + 0.5 * h, Qa, dQ);
+        equations_of_motion(t + 0.5 * h, Qa, dQ);
         for(i = 0; i <= Dim-1; i++)
         {
                 k3[i] = h * dQ[i];
                 Qa[i] = Q0[i] + k3[i];
         }
 
-        dQdt(t + h, Qa, dQ);
+        equations_of_motion(t + h, Qa, dQ);
         for(i = 0; i <= Dim - 1; i++)
         {
                 k4[i] = h * dQ[i];
@@ -80,25 +72,28 @@ void rko4(double h, int Dim,
 
 int main()
 {
+	const double h = 0.01;
+	const int Dim = 3;
         int i,step;
-        double *Q0 = array(Dim),*Q1 = array(Dim);
+        double present_state[Dim],future_state[Dim];
+		
+
 
       /* Initial state variables */
-        Q0[0] = 10.;
-        Q0[1] = 10.;
-        Q0[2] = 10.;
+        present_state[0] = 10.;
+        present_state[1] = 10.;
+        present_state[2] = 10.;
 
       /* Main part */
         for(step = 0; step <= Steps - 1; step++)
         {
                 for(i = 0; i <= Dim - 1; i++)
                 {
-                        printf("%f", Q0[i]);
-                        if(i == Dim - 1) putchar('\n');
-                        else putchar(' ');
+                        printf("%f", present_state[i]);
+                        (i == Dim - 1) ? putchar('\n') : putchar(' ');
                 }
-                rko4(h,Dim, user_def_func, h*step, Q0, Q1);
-                swap_array(Dim, Q1, Q0);
+                rko4(h,Dim, user_def_func, h*step, present_state, future_state);
+                memmove(present_state,future_state,Dim * sizeof(double));
         }
         return 0;
 }
