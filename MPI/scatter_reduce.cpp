@@ -20,7 +20,6 @@ int main(int argc, char **argv)
   char my_string[SIZE];
   char my_name[SIZE];
 
-
   double *big_buf,*rec_buf;
   double sum;
 

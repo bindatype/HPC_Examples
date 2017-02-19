@@ -11,7 +11,7 @@
 #include <bits/local_lim.h>
 
 #define COLS (5)
-#define ROWS (1024)
+#define ROWS (2097152)
 
 extern double get_change(double *x, double *y, int n);
 extern void relax(double *dest, double *srce, int cols, int rows);
